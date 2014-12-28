@@ -1,20 +1,18 @@
 FROM flynn/cedarish
 
-WORKDIR /tmp/builder
-RUN curl -O https://raw.githubusercontent.com/flynn/flynn/master/slugbuilder/builder/install-buildpack
-RUN curl -O https://raw.githubusercontent.com/flynn/flynn/master/slugbuilder/builder/build.sh
-RUN chmod +x install-buildpack build.sh
-RUN curl https://raw.githubusercontent.com/flynn/flynn/master/slugbuilder/builder/buildpacks.txt | xargs -L 1 ./install-buildpack /tmp/buildpacks
+# from ./flynn/slugbuilder/Dockerfile
+ADD ./flynn/slugbuilder/builder /tmp/builder
+RUN xargs -L 1 /tmp/builder/install-buildpack /tmp/buildpacks < /tmp/builder/buildpacks.txt
 
-WORKDIR /tmp/runner
-RUN curl -O https://raw.githubusercontent.com/flynn/flynn/master/slugrunner/runner/init
-RUN echo '/tmp/runner/init $@ < /tmp/slug.tgz' > init_alias
-RUN chmod +x init_alias
+# from ./flynn/slugrunner/Dockerfile
+ADD ./flynn/slugrunner/runner /tmp/runner
+
+RUN echo '/tmp/runner/init $@ < /tmp/slug.tgz' > /tmp/runner/init_alias
+RUN chmod +x /tmp/runner/init_alias
 
 ONBUILD ADD . /tmp/code/
-ONBUILD WORKDIR /tmp/code/
 # exporting .env file from http://stackoverflow.com/a/20909045
-ONBUILD RUN tar -c . | env $(cat build.env | xargs) /tmp/builder/build.sh
+ONBUILD RUN tar -cC /tmp/code . | env $(cat /tmp/code/build.env | xargs) /tmp/builder/build.sh
 
 
 ENTRYPOINT ["/tmp/runner/init_alias"]

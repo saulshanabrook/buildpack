@@ -7,7 +7,7 @@ RUN xargs -L 1 /tmp/builder/install-buildpack /tmp/buildpacks < /tmp/builder/bui
 # from ./flynn/slugrunner/Dockerfile
 ADD ./flynn/slugrunner/runner /tmp/runner
 
-ADD init_alias /tmp/runner/init_alias
+ADD init_alias /tmp/runner/init_alias.sh
 
 ONBUILD ADD . /tmp/code/
 # exporting .env file from http://stackoverflow.com/a/20909045

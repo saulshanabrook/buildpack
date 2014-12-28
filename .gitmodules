@@ -1,3 +1,3 @@
 [submodule "flynn"]
 	path = flynn
-	url = git@github.com:flynn/flynn.git
+	url = https://github.com/flynn/flynn.git

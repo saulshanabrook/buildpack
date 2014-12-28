@@ -5,7 +5,7 @@ A base image that allows easy extension to run Heroku like apps.
 If you have a Heroku app, just run add a Dockerfile:
 
 ```
-FROM buildpack
+FROM saulshanabrook/buildpack
 CMD start web
 ```
 
